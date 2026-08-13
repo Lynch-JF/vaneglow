@@ -448,6 +448,23 @@
   .admin-submit-btn:hover{background:var(--wine-deep);}
   .admin-submit-btn:disabled{opacity:0.5; cursor:not-allowed;}
 
+  /* ===== Password gate ===== */
+  .password-modal{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:340px; max-width:90vw;
+    background:var(--paper); border-radius:6px; z-index:2101;
+    box-shadow:0 24px 60px rgba(36,16,23,0.3);
+    display:none;
+  }
+  .password-modal.active{display:block;}
+  .password-modal .admin-modal-header{border-radius:6px 6px 0 0;}
+  .password-form{padding:1.5rem 1.6rem;}
+  .password-form p{font-size:0.85rem; color:#5a4d51; margin-bottom:1rem;}
+  .password-error{
+    font-family:'Space Mono'; font-size:0.75rem; color:var(--coral);
+    margin-top:0.5rem; min-height:1.1em;
+  }
+
   .toast{
     position:fixed; bottom:2rem; right:2rem; background:var(--ink); color:var(--paper);
     padding:0.9rem 1.3rem; border-radius:3px; box-shadow:0 10px 24px rgba(0,0,0,0.25);
@@ -482,7 +499,7 @@
 <header>
   <div class="header-top">
     <div class="logo-mark">
-      <img src="logo.jpeg" alt="VanessaGlow Makeup — logo" onerror="this.style.display='none'">
+      <img src="logo.jpeg" alt="VanessaGlow Makeup — logo. Toca para acceso de administrador" onerror="this.style.display='none'" onclick="openPasswordPrompt()" style="cursor:pointer;" title="Acceso administrador">
       <div class="lockup">
         <span class="wordmark">VanessaGlow</span>
         <div class="swatch-strip"><span></span><span></span><span></span><span></span><span></span></div>
@@ -567,15 +584,12 @@
         <h2 id="catalogTitle">Catálogo de productos</h2>
         <div class="count" id="catalogCount"></div>
       </div>
-      <div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">
-        <button class="add-product-btn" onclick="openAdminPanel()"><i class="fas fa-plus"></i> Agregar producto</button>
-        <select class="sort-select" id="sortSelect" onchange="renderProducts()">
-          <option value="relevance">Más relevantes</option>
-          <option value="price-asc">Menor precio</option>
-          <option value="price-desc">Mayor precio</option>
-          <option value="rating">Mejor valorados</option>
-        </select>
-      </div>
+      <select class="sort-select" id="sortSelect" onchange="renderProducts()">
+        <option value="relevance">Más relevantes</option>
+        <option value="price-asc">Menor precio</option>
+        <option value="price-desc">Mayor precio</option>
+        <option value="rating">Mejor valorados</option>
+      </select>
     </div>
 
     <div class="products-grid" id="productsGrid"></div>
@@ -602,7 +616,27 @@
 
 <div class="overlay" id="overlay" onclick="toggleCart()"></div>
 
-<div class="overlay admin-overlay" id="adminOverlay" onclick="closeAdminPanel()"></div>
+<div class="overlay admin-overlay" id="adminOverlay" onclick="closeAdminPanel(); closePasswordPrompt();"></div>
+
+<div class="password-modal" id="passwordModal">
+  <div class="admin-modal-header">
+    <span class="title">Acceso administrador</span>
+    <button onclick="closePasswordPrompt()" aria-label="Cerrar">✕</button>
+  </div>
+  <form class="password-form" id="passwordForm" onsubmit="checkPassword(event)">
+    <p>Ingresa la contraseña para agregar productos al catálogo.</p>
+    <div class="form-group" style="margin-bottom:0;">
+      <label for="adminPassword">Contraseña</label>
+      <input type="password" id="adminPassword" required autocomplete="current-password">
+      <div class="password-error" id="passwordError"></div>
+    </div>
+    <div class="admin-form-actions">
+      <button type="button" class="admin-cancel-btn" onclick="closePasswordPrompt()">Cancelar</button>
+      <button type="submit" class="admin-submit-btn">Entrar</button>
+    </div>
+  </form>
+</div>
+
 <div class="admin-modal" id="adminModal">
   <div class="admin-modal-header">
     <span class="title">Nuevo producto</span>
@@ -651,6 +685,7 @@
   const WHATSAPP_NUMBER = '18095551234'; // reemplaza con tu número real
   const CLOUDINARY_CLOUD_NAME = 'msoph1px';
   const CLOUDINARY_UPLOAD_PRESET = 'vanessa_glow';
+  const ADMIN_PASSWORD = 'vanessaglow2026'; // cámbiala por la que quieras usar
 
   const categories = [
     { id:'Todas', label:'Todo', color:null },
@@ -943,6 +978,35 @@
     toast.innerHTML = `<span>${msg}</span>`;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2200);
+  }
+
+  /* ===== Password gate ===== */
+  function openPasswordPrompt(){
+    document.getElementById('passwordForm').reset();
+    document.getElementById('passwordError').textContent = '';
+    document.getElementById('passwordModal').classList.add('active');
+    document.getElementById('adminOverlay').classList.add('active');
+    setTimeout(() => document.getElementById('adminPassword').focus(), 50);
+  }
+
+  function closePasswordPrompt(){
+    document.getElementById('passwordModal').classList.remove('active');
+    if (!document.getElementById('adminModal').classList.contains('active')){
+      document.getElementById('adminOverlay').classList.remove('active');
+    }
+  }
+
+  function checkPassword(e){
+    e.preventDefault();
+    const input = document.getElementById('adminPassword');
+    if (input.value === ADMIN_PASSWORD){
+      closePasswordPrompt();
+      openAdminPanel();
+    } else {
+      document.getElementById('passwordError').textContent = 'Contraseña incorrecta. Intenta de nuevo.';
+      input.value = '';
+      input.focus();
+    }
   }
 
   /* ===== Admin panel: add product ===== */
