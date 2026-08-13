@@ -1145,7 +1145,12 @@
     document.getElementById('productOverlay').style.display = 'none';
   }
 
-  async function generateInvoicePDF(){
+  function makeInvoiceNumber(){
+    return 'VG-' + Date.now().toString().slice(-8);
+  }
+
+  async function generateInvoicePDF(invoiceNumber){
+    invoiceNumber = invoiceNumber || makeInvoiceNumber();
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -1165,7 +1170,6 @@
     doc.text('Factura de pedido', marginX, y);
 
     const now = new Date();
-    const invoiceNumber = 'VG-' + now.getTime().toString().slice(-8);
     doc.setFontSize(9);
     doc.text(`No. ${invoiceNumber}`, pageWidth - marginX, 20, { align: 'right' });
     doc.text(now.toLocaleString('es-DO'), pageWidth - marginX, 25, { align: 'right' });
@@ -1250,7 +1254,8 @@
     checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando factura…';
 
     try{
-      const doc = await generateInvoicePDF();
+      const invoiceNumber = makeInvoiceNumber();
+      const doc = await generateInvoicePDF(invoiceNumber);
       const fileName = `Factura-VanessaGlow-${Date.now()}.pdf`;
       doc.save(fileName);
 
@@ -1281,7 +1286,7 @@
       return;
     }
 
-    if (!window.emailjs || EMAILJS_PUBLIC_KEY === 't07iFZ7RI2_FvCtF7'){
+    if (!window.emailjs || EMAILJS_PUBLIC_KEY === 'TU_PUBLIC_KEY'){
       showToast('Falta configurar EmailJS en el código');
       return;
     }
@@ -1292,15 +1297,19 @@
     emailBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando…';
 
     try{
-      const doc = await generateInvoicePDF();
+      const invoiceNumber = makeInvoiceNumber();
+      const doc = await generateInvoicePDF(invoiceNumber);
       const pdfDataUri = doc.output('datauristring');
       const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
       const orderSummary = cart
         .map(i => `${i.name} x${i.quantity} — RD$ ${(i.price * i.quantity).toLocaleString()}`)
         .join('\n');
+      const toName = email.split('@')[0];
 
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
         to_email: email,
+        to_name: toName,
+        invoice_number: invoiceNumber,
         order_summary: orderSummary,
         total: `RD$ ${total.toLocaleString()}`,
         invoice_pdf: pdfDataUri
