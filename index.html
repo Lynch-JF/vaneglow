@@ -442,6 +442,15 @@
 
   .admin-form-actions{display:flex; gap:0.7rem; margin-top:1.4rem;}
   .admin-form-actions button{flex:1; padding:0.8rem; border-radius:2px; cursor:pointer; font-weight:600; font-size:0.88rem;}
+  .admin-delete-btn{background:none; border:1px solid var(--coral); color:var(--coral);}
+  .admin-delete-btn:hover{background:var(--coral); color:white;}
+
+  .edit-link{
+    background:none; border:none; cursor:pointer; padding:0;
+    font-family:'Space Mono'; font-size:0.62rem; letter-spacing:0.04em;
+    color:var(--wine); text-decoration:underline;
+  }
+  .edit-link:hover{color:var(--coral);}
   .admin-cancel-btn{background:none; border:1px solid var(--line); color:#5a4d51;}
   .admin-cancel-btn:hover{border-color:var(--coral); color:var(--coral);}
   .admin-submit-btn{background:var(--wine); color:white; border:none;}
@@ -639,7 +648,7 @@
 
 <div class="admin-modal" id="adminModal">
   <div class="admin-modal-header">
-    <span class="title">Nuevo producto</span>
+    <span class="title" id="adminModalTitle">Nuevo producto</span>
     <button onclick="closeAdminPanel()" aria-label="Cerrar">✕</button>
   </div>
   <form class="admin-form" id="adminForm" onsubmit="submitProduct(event)">
@@ -675,6 +684,7 @@
       </div>
     </div>
     <div class="admin-form-actions">
+      <button type="button" class="admin-delete-btn" id="deleteProductBtn" style="display:none;" onclick="deleteProduct()">Eliminar</button>
       <button type="button" class="admin-cancel-btn" onclick="closeAdminPanel()">Cancelar</button>
       <button type="submit" class="admin-submit-btn" id="submitBtn">Agregar producto</button>
     </div>
@@ -743,6 +753,8 @@
   let cart = [];
   let wishlist = new Set();
   let pendingImageUrl = null;
+  let editingProductId = null;
+  let isAdmin = false;
   let nextProductId = Math.max(...products.map(p => p.id)) + 1;
 
   function grad(colors){
@@ -818,7 +830,10 @@
           </div>
         </div>
         <div class="product-info">
-          <div class="product-category">${p.category}</div>
+          <div class="product-category" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>${p.category}</span>
+            ${isAdmin ? `<button class="edit-link" onclick="openAdminPanel(${p.id})">✎ Editar</button>` : ''}
+          </div>
           <h3 class="product-name">${p.name}</h3>
           <div class="product-rating">
             ${renderStars(p.rating)}
@@ -982,6 +997,10 @@
 
   /* ===== Password gate ===== */
   function openPasswordPrompt(){
+    if (isAdmin){
+      openAdminPanel();
+      return;
+    }
     document.getElementById('passwordForm').reset();
     document.getElementById('passwordError').textContent = '';
     document.getElementById('passwordModal').classList.add('active');
@@ -1000,8 +1019,10 @@
     e.preventDefault();
     const input = document.getElementById('adminPassword');
     if (input.value === ADMIN_PASSWORD){
+      isAdmin = true;
       closePasswordPrompt();
       openAdminPanel();
+      renderProducts();
     } else {
       document.getElementById('passwordError').textContent = 'Contraseña incorrecta. Intenta de nuevo.';
       input.value = '';
@@ -1009,13 +1030,49 @@
     }
   }
 
-  /* ===== Admin panel: add product ===== */
-  function openAdminPanel(){
+  /* ===== Admin panel: add / edit product ===== */
+  function openAdminPanel(productId){
+    editingProductId = productId || null;
     populateCategorySelect();
     document.getElementById('adminForm').reset();
     pendingImageUrl = null;
     document.getElementById('uploadStatus').textContent = '';
     resetUploadZone();
+
+    const titleEl = document.getElementById('adminModalTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const deleteBtn = document.getElementById('deleteProductBtn');
+    const existing = editingProductId ? products.find(p => p.id === editingProductId) : null;
+
+    if (existing){
+      titleEl.textContent = 'Editar producto';
+      submitBtn.textContent = 'Guardar cambios';
+      deleteBtn.style.display = 'block';
+
+      document.getElementById('prodName').value = existing.name;
+      document.getElementById('prodCategory').value = existing.category;
+      document.getElementById('prodPrice').value = existing.price;
+      document.getElementById('prodOriginalPrice').value = existing.originalPrice || '';
+      document.getElementById('prodBadge').value = existing.badge || '';
+
+      if (existing.image){
+        pendingImageUrl = existing.image;
+        const zone = document.getElementById('uploadZone');
+        const img = document.createElement('img');
+        img.src = existing.image;
+        zone.insertBefore(img, zone.firstChild);
+        zone.classList.add('has-image');
+        const hint = zone.querySelector('.upload-hint');
+        const icon = zone.querySelector('i.fa-camera');
+        if (hint) hint.style.display = 'none';
+        if (icon) icon.style.display = 'none';
+      }
+    } else {
+      titleEl.textContent = 'Nuevo producto';
+      submitBtn.textContent = 'Agregar producto';
+      deleteBtn.style.display = 'none';
+    }
+
     document.getElementById('adminModal').classList.add('active');
     document.getElementById('adminOverlay').classList.add('active');
   }
@@ -1023,6 +1080,17 @@
   function closeAdminPanel(){
     document.getElementById('adminModal').classList.remove('active');
     document.getElementById('adminOverlay').classList.remove('active');
+  }
+
+  function deleteProduct(){
+    if (!editingProductId) return;
+    const idx = products.findIndex(p => p.id === editingProductId);
+    if (idx === -1) return;
+    if (!confirm(`¿Eliminar "${products[idx].name}" del catálogo?`)) return;
+    const removed = products.splice(idx, 1)[0];
+    closeAdminPanel();
+    renderProducts();
+    showToast(`Producto "${removed.name}" eliminado`);
   }
 
   function populateCategorySelect(){
@@ -1099,6 +1167,25 @@
 
     const catInfo = categories.find(c => c.id === category);
     const baseColor = (catInfo && catInfo.color) || '#B68A46';
+
+    if (editingProductId){
+      const existing = products.find(p => p.id === editingProductId);
+      if (existing){
+        existing.name = name;
+        existing.category = category;
+        existing.price = price;
+        existing.originalPrice = originalPrice;
+        existing.badge = badge;
+        existing.image = pendingImageUrl;
+        existing.photoGradient = [baseColor, '#241017'];
+        existing.swatches = [baseColor, '#B68A46', '#6E1F3D'];
+      }
+      closeAdminPanel();
+      currentCategory = category;
+      renderProducts();
+      showToast(`✓ ${name} actualizado`);
+      return;
+    }
 
     const newProduct = {
       id: nextProductId++,
