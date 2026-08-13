@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VanessaGlow — Catálogo</title>
+<link rel="icon" href="logo.jpeg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -65,14 +66,20 @@
     flex-wrap:wrap;
   }
   .logo-mark{
-    display:flex; flex-direction:column; gap:0.35rem;
-    min-width:180px;
+    display:flex; align-items:center; gap:0.85rem;
+    min-width:200px;
   }
+  .logo-mark img{
+    height:58px; width:58px; object-fit:cover; object-position:top;
+    border-radius:50%;
+    box-shadow:0 0 0 1px var(--line);
+  }
+  .logo-mark .lockup{display:flex; flex-direction:column; gap:0.3rem;}
   .logo-mark .wordmark{
     font-family:'Fraunces', serif;
     font-style:italic;
     font-weight:500;
-    font-size:1.7rem;
+    font-size:1.5rem;
     color:var(--wine-deep);
     line-height:1;
   }
@@ -404,8 +411,11 @@
 <header>
   <div class="header-top">
     <div class="logo-mark">
-      <span class="wordmark">VanessaGlow</span>
-      <div class="swatch-strip"><span></span><span></span><span></span><span></span><span></span></div>
+      <img src="logo.jpeg" alt="VanessaGlow Makeup — logo" onerror="this.style.display='none'">
+      <div class="lockup">
+        <span class="wordmark">VanessaGlow</span>
+        <div class="swatch-strip"><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
     </div>
 
     <div class="search-container">
