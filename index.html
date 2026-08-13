@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root{
     --ink:#241017;
@@ -696,6 +697,9 @@
   const CLOUDINARY_CLOUD_NAME = 'msoph1px';
   const CLOUDINARY_UPLOAD_PRESET = 'vanessa_glow';
   const ADMIN_PASSWORD = 'vanessaglow2026'; // cámbiala por la que quieras usar
+  const SUPABASE_URL = 'https://tjlrpeddzbwmbrhbmmly.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_TFpobcJnKbzqoY6-ckmPxw_nXZMYY-w';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const categories = [
     { id:'Todas', label:'Todo', color:null },
@@ -706,7 +710,8 @@
     { id:'Herramientas & Accesorios', label:'Herramientas', color:'#7A7267' },
   ];
 
-  const products = [
+  // Respaldo local — solo se usa si Supabase no responde (ej. sin conexión)
+  const fallbackProducts = [
     {
       id:1, name:'Elf Glow Reviver Melting Lip Balm', category:'Labiales & Glosses',
       price:450, originalPrice:500, rating:4.5, reviews:23, badge:'Nuevo',
@@ -749,13 +754,40 @@
     },
   ];
 
+  let products = [];
   let currentCategory = 'Todas';
   let cart = [];
   let wishlist = new Set();
   let pendingImageUrl = null;
   let editingProductId = null;
   let isAdmin = false;
-  let nextProductId = Math.max(...products.map(p => p.id)) + 1;
+  let nextProductId = 1;
+
+  /* ===== Supabase: mapear fila de la tabla <-> objeto de producto ===== */
+  function rowToProduct(row){
+    return {
+      id: row.id,
+      name: row.name,
+      category: row.category,
+      price: Number(row.price),
+      originalPrice: row.original_price !== null && row.original_price !== undefined ? Number(row.original_price) : null,
+      rating: Number(row.rating),
+      reviews: row.reviews,
+      badge: row.badge,
+      image: row.image,
+      photoGradient: row.photo_gradient,
+      swatches: row.swatches
+    };
+  }
+
+  async function loadProductsFromSupabase(){
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .order('id', { ascending:false });
+    if (error) throw error;
+    return data.map(rowToProduct);
+  }
 
   function grad(colors){
     return `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 100%)`;
