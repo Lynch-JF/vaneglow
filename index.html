@@ -377,6 +377,77 @@
     backdrop-filter:blur(1px);
   }
 
+  /* ===== Add product button ===== */
+  .add-product-btn{
+    display:flex; align-items:center; gap:0.5rem;
+    padding:0.6rem 1rem; background:none; border:1px solid var(--gold);
+    color:var(--wine-deep); border-radius:2px; cursor:pointer;
+    font-size:0.85rem; font-weight:600; white-space:nowrap;
+    transition:all .2s;
+  }
+  .add-product-btn:hover{background:var(--gold); color:white;}
+
+  /* ===== Admin panel ===== */
+  .admin-overlay{ z-index:1999; }
+  .admin-overlay.active{ display:block; }
+  .admin-modal{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:480px; max-width:92vw; max-height:88vh; overflow-y:auto;
+    background:var(--paper); border-radius:6px; z-index:2001;
+    box-shadow:0 24px 60px rgba(36,16,23,0.3);
+    display:none;
+  }
+  .admin-modal.active{display:block;}
+  .admin-modal-header{
+    background:var(--ink); color:var(--paper); padding:1.3rem 1.6rem;
+    display:flex; justify-content:space-between; align-items:center;
+    position:sticky; top:0;
+  }
+  .admin-modal-header .title{font-family:'Fraunces'; font-style:italic; font-size:1.25rem;}
+  .admin-modal-header button{background:none; border:none; color:var(--paper); font-size:1.2rem; cursor:pointer;}
+  .admin-form{padding:1.5rem 1.6rem;}
+  .form-group{margin-bottom:1.1rem;}
+  .form-group label{
+    display:block; font-family:'Space Mono'; font-size:0.65rem; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--wine); margin-bottom:0.45rem;
+  }
+  .form-group input[type=text], .form-group input[type=number], .form-group select{
+    width:100%; padding:0.65rem 0.8rem; border:1px solid var(--line);
+    border-radius:2px; font-family:'Work Sans'; font-size:0.9rem; background:white;
+  }
+  .form-row{display:flex; gap:0.8rem;}
+  .form-row .form-group{flex:1;}
+
+  .image-upload-zone{
+    border:1.5px dashed var(--line); border-radius:4px;
+    padding:1.2rem; text-align:center; cursor:pointer;
+    transition:border-color .2s; position:relative;
+    display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+  }
+  .image-upload-zone:hover{border-color:var(--gold);}
+  .image-upload-zone.has-image{padding:0; overflow:hidden;}
+  .image-upload-zone input[type=file]{
+    position:absolute; inset:0; opacity:0; cursor:pointer;
+  }
+  .image-upload-zone img{width:100%; height:160px; object-fit:cover; display:block;}
+  .image-upload-zone .upload-hint{color:#9c8f92; font-size:0.82rem;}
+  .image-upload-zone .upload-status{
+    font-family:'Space Mono'; font-size:0.72rem; color:var(--wine);
+    position:relative; z-index:1;
+  }
+  .image-upload-zone.has-image .upload-status{
+    position:absolute; bottom:6px; left:6px; right:6px;
+    background:rgba(36,16,23,0.75); color:white; padding:0.3rem 0.5rem; border-radius:2px;
+  }
+
+  .admin-form-actions{display:flex; gap:0.7rem; margin-top:1.4rem;}
+  .admin-form-actions button{flex:1; padding:0.8rem; border-radius:2px; cursor:pointer; font-weight:600; font-size:0.88rem;}
+  .admin-cancel-btn{background:none; border:1px solid var(--line); color:#5a4d51;}
+  .admin-cancel-btn:hover{border-color:var(--coral); color:var(--coral);}
+  .admin-submit-btn{background:var(--wine); color:white; border:none;}
+  .admin-submit-btn:hover{background:var(--wine-deep);}
+  .admin-submit-btn:disabled{opacity:0.5; cursor:not-allowed;}
+
   .toast{
     position:fixed; bottom:2rem; right:2rem; background:var(--ink); color:var(--paper);
     padding:0.9rem 1.3rem; border-radius:3px; box-shadow:0 10px 24px rgba(0,0,0,0.25);
@@ -496,12 +567,15 @@
         <h2 id="catalogTitle">Catálogo de productos</h2>
         <div class="count" id="catalogCount"></div>
       </div>
-      <select class="sort-select" id="sortSelect" onchange="renderProducts()">
-        <option value="relevance">Más relevantes</option>
-        <option value="price-asc">Menor precio</option>
-        <option value="price-desc">Mayor precio</option>
-        <option value="rating">Mejor valorados</option>
-      </select>
+      <div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">
+        <button class="add-product-btn" onclick="openAdminPanel()"><i class="fas fa-plus"></i> Agregar producto</button>
+        <select class="sort-select" id="sortSelect" onchange="renderProducts()">
+          <option value="relevance">Más relevantes</option>
+          <option value="price-asc">Menor precio</option>
+          <option value="price-desc">Mayor precio</option>
+          <option value="rating">Mejor valorados</option>
+        </select>
+      </div>
     </div>
 
     <div class="products-grid" id="productsGrid"></div>
@@ -528,8 +602,55 @@
 
 <div class="overlay" id="overlay" onclick="toggleCart()"></div>
 
+<div class="overlay admin-overlay" id="adminOverlay" onclick="closeAdminPanel()"></div>
+<div class="admin-modal" id="adminModal">
+  <div class="admin-modal-header">
+    <span class="title">Nuevo producto</span>
+    <button onclick="closeAdminPanel()" aria-label="Cerrar">✕</button>
+  </div>
+  <form class="admin-form" id="adminForm" onsubmit="submitProduct(event)">
+    <div class="form-group">
+      <label for="prodName">Nombre</label>
+      <input type="text" id="prodName" required placeholder="ej. Labial Mate Ruby Woo">
+    </div>
+    <div class="form-group">
+      <label for="prodCategory">Categoría</label>
+      <select id="prodCategory" required></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="prodPrice">Precio (RD$)</label>
+        <input type="number" id="prodPrice" required min="0" placeholder="450">
+      </div>
+      <div class="form-group">
+        <label for="prodOriginalPrice">Precio antes (opcional)</label>
+        <input type="number" id="prodOriginalPrice" min="0" placeholder="550">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="prodBadge">Etiqueta (opcional)</label>
+      <input type="text" id="prodBadge" placeholder="ej. Nuevo, -15%, Top">
+    </div>
+    <div class="form-group">
+      <label>Foto</label>
+      <div class="image-upload-zone" id="uploadZone">
+        <i class="fas fa-camera" style="font-size:1.4rem; color:var(--gold-soft);"></i>
+        <span class="upload-hint">Toca para subir una foto</span>
+        <span class="upload-status" id="uploadStatus"></span>
+        <input type="file" accept="image/*" id="prodImageInput" onchange="handleImageSelect(event)">
+      </div>
+    </div>
+    <div class="admin-form-actions">
+      <button type="button" class="admin-cancel-btn" onclick="closeAdminPanel()">Cancelar</button>
+      <button type="submit" class="admin-submit-btn" id="submitBtn">Agregar producto</button>
+    </div>
+  </form>
+</div>
+
 <script>
   const WHATSAPP_NUMBER = '18095551234'; // reemplaza con tu número real
+  const CLOUDINARY_CLOUD_NAME = 'msoph1px';
+  const CLOUDINARY_UPLOAD_PRESET = 'vanessa_glow';
 
   const categories = [
     { id:'Todas', label:'Todo', color:null },
@@ -586,6 +707,8 @@
   let currentCategory = 'Todas';
   let cart = [];
   let wishlist = new Set();
+  let pendingImageUrl = null;
+  let nextProductId = Math.max(...products.map(p => p.id)) + 1;
 
   function grad(colors){
     return `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 100%)`;
@@ -652,7 +775,9 @@
           <div class="wishlist-icon ${wishlist.has(p.id) ? 'active' : ''}" onclick="toggleWishlist(${p.id})" role="button" aria-label="Agregar a favoritos">
             <i class="${wishlist.has(p.id) ? 'fas' : 'far'} fa-heart"></i>
           </div>
-          <i class="fas fa-wand-magic-sparkles icon"></i>
+          ${p.image
+            ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
+            : `<i class="fas fa-wand-magic-sparkles icon"></i>`}
           <div class="card-swatches">
             ${p.swatches.map(c => `<span style="background:${c}"></span>`).join('')}
           </div>
@@ -764,7 +889,9 @@
       return `
         <div class="cart-item">
           <div class="cart-item-photo" style="background:${grad(item.photoGradient)}">
-            <i class="fas fa-wand-magic-sparkles"></i>
+            ${item.image
+              ? `<img src="${item.image}" style="width:100%;height:100%;object-fit:cover;border-radius:3px;">`
+              : `<i class="fas fa-wand-magic-sparkles"></i>`}
           </div>
           <div class="cart-item-details">
             <div class="cart-item-name">${item.name}</div>
@@ -816,6 +943,113 @@
     toast.innerHTML = `<span>${msg}</span>`;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2200);
+  }
+
+  /* ===== Admin panel: add product ===== */
+  function openAdminPanel(){
+    populateCategorySelect();
+    document.getElementById('adminForm').reset();
+    pendingImageUrl = null;
+    document.getElementById('uploadStatus').textContent = '';
+    resetUploadZone();
+    document.getElementById('adminModal').classList.add('active');
+    document.getElementById('adminOverlay').classList.add('active');
+  }
+
+  function closeAdminPanel(){
+    document.getElementById('adminModal').classList.remove('active');
+    document.getElementById('adminOverlay').classList.remove('active');
+  }
+
+  function populateCategorySelect(){
+    const sel = document.getElementById('prodCategory');
+    sel.innerHTML = categories.filter(c => c.id !== 'Todas')
+      .map(c => `<option value="${c.id}">${c.id}</option>`).join('');
+  }
+
+  function resetUploadZone(){
+    const zone = document.getElementById('uploadZone');
+    zone.classList.remove('has-image');
+    zone.querySelectorAll('img').forEach(img => img.remove());
+    const hint = zone.querySelector('.upload-hint');
+    const icon = zone.querySelector('i.fa-camera');
+    if (hint) hint.style.display = '';
+    if (icon) icon.style.display = '';
+  }
+
+  async function handleImageSelect(e){
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const zone = document.getElementById('uploadZone');
+    const status = document.getElementById('uploadStatus');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const previewUrl = URL.createObjectURL(file);
+    zone.querySelectorAll('img').forEach(img => img.remove());
+    const img = document.createElement('img');
+    img.src = previewUrl;
+    zone.insertBefore(img, zone.firstChild);
+    zone.classList.add('has-image');
+    const hint = zone.querySelector('.upload-hint');
+    const icon = zone.querySelector('i.fa-camera');
+    if (hint) hint.style.display = 'none';
+    if (icon) icon.style.display = 'none';
+
+    status.textContent = 'Subiendo…';
+    submitBtn.disabled = true;
+    pendingImageUrl = null;
+
+    try{
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST', body: formData
+      });
+      const data = await res.json();
+      if (data.secure_url){
+        pendingImageUrl = data.secure_url;
+        status.textContent = 'Imagen subida ✓';
+      } else {
+        throw new Error(data.error?.message || 'Error al subir');
+      }
+    } catch(err){
+      status.textContent = 'No se pudo subir. Intenta de nuevo.';
+      pendingImageUrl = null;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+
+  function submitProduct(e){
+    e.preventDefault();
+    const name = document.getElementById('prodName').value.trim();
+    const category = document.getElementById('prodCategory').value;
+    const price = parseFloat(document.getElementById('prodPrice').value);
+    const originalPriceRaw = document.getElementById('prodOriginalPrice').value;
+    const originalPrice = originalPriceRaw ? parseFloat(originalPriceRaw) : null;
+    const badge = document.getElementById('prodBadge').value.trim() || null;
+
+    if (!name || !category || isNaN(price)) return;
+
+    const catInfo = categories.find(c => c.id === category);
+    const baseColor = (catInfo && catInfo.color) || '#B68A46';
+
+    const newProduct = {
+      id: nextProductId++,
+      name, category, price, originalPrice,
+      rating: 5, reviews: 0, badge,
+      image: pendingImageUrl,
+      photoGradient: [baseColor, '#241017'],
+      swatches: [baseColor, '#B68A46', '#6E1F3D']
+    };
+
+    products.unshift(newProduct);
+    closeAdminPanel();
+    currentCategory = category;
+    renderProducts();
+    showToast(`✓ ${name} agregado al catálogo`);
   }
 
   renderNav();
