@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root{
     --ink:#241017;
@@ -367,6 +369,15 @@
     transition:background .2s;
   }
   .checkout-btn:hover{background:#4a5e42;}
+  .email-invoice-row{margin-bottom:0.6rem;}
+  .email-invoice-row input[type=email]{
+    width:100%; padding:0.65rem 0.8rem; margin-bottom:0.5rem;
+    border:1px solid var(--line); border-radius:2px;
+    font-family:'Work Sans'; font-size:0.85rem; background:white;
+  }
+  .email-btn{background:var(--wine); margin-bottom:0;}
+  .email-btn:hover{background:var(--wine-deep);}
+  .email-btn:disabled{opacity:0.6; cursor:not-allowed;}
   .clear-btn{
     width:100%; padding:0.65rem; background:none; color:#9c8f92; border:1px solid var(--line);
     border-radius:2px; cursor:pointer; font-size:0.82rem;
@@ -668,6 +679,12 @@
     <button class="checkout-btn" onclick="checkout()">
       <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
     </button>
+    <div class="email-invoice-row">
+      <input type="email" id="customerEmail" placeholder="Tu correo, para enviarte la factura">
+      <button class="checkout-btn email-btn" onclick="sendInvoiceByEmail()">
+        <i class="fas fa-envelope"></i> Enviar factura por correo
+      </button>
+    </div>
     <button class="clear-btn" onclick="clearCart()">Vaciar neceser</button>
   </div>
 </div>
@@ -748,13 +765,19 @@
 </div>
 
 <script>
-  const WHATSAPP_NUMBER = '18294645003'; // reemplaza con tu número real
+  const WHATSAPP_NUMBER = '18095551234'; // reemplaza con tu número real
   const CLOUDINARY_CLOUD_NAME = 'msoph1px';
   const CLOUDINARY_UPLOAD_PRESET = 'vanessa_glow';
-  const ADMIN_PASSWORD = 'vanessa'; // cámbiala por la que quieras usar
+  const ADMIN_PASSWORD = 'vanessaglow2026'; // cámbiala por la que quieras usar
   const SUPABASE_URL = 'https://tjlrpeddzbwmbrhbmmly.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_TFpobcJnKbzqoY6-ckmPxw_nXZMYY-w';
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Configura estos 3 valores desde tu cuenta de EmailJS (emailjs.com) — ver instrucciones abajo
+  const EMAILJS_PUBLIC_KEY = 't07iFZ7RI2_FvCtF7';
+  const EMAILJS_SERVICE_ID = 'service_n3s4reb';
+  const EMAILJS_TEMPLATE_ID = 'template_eoyqjwd';
+  if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
   const categories = [
     { id:'Todas', label:'Todo', color:null },
@@ -846,6 +869,28 @@
 
   function grad(colors){
     return `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 100%)`;
+  }
+
+  function loadImageAsDataURL(url, maxDim = 300){
+    return new Promise((resolve) => {
+      if (!url){ resolve(null); return; }
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try{
+          const scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.naturalWidth * scale);
+          canvas.height = Math.round(img.naturalHeight * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.72));
+        } catch(err){
+          resolve(null); // ej. imagen bloqueada por CORS
+        }
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
   }
 
   function renderNav(){
@@ -1100,16 +1145,176 @@
     document.getElementById('productOverlay').style.display = 'none';
   }
 
-  function checkout(){
-    if (cart.length === 0){ showToast('Tu neceser está vacío'); return; }
-    let msg = 'Hola! Quiero pedir:\n\n';
+  async function generateInvoicePDF(){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const marginX = 15;
+    const imgSize = 20;
+    let y = 20;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(110, 31, 61);
+    doc.text('VanessaGlow', marginX, y);
+
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(90, 77, 81);
+    doc.text('Factura de pedido', marginX, y);
+
+    const now = new Date();
+    const invoiceNumber = 'VG-' + now.getTime().toString().slice(-8);
+    doc.setFontSize(9);
+    doc.text(`No. ${invoiceNumber}`, pageWidth - marginX, 20, { align: 'right' });
+    doc.text(now.toLocaleString('es-DO'), pageWidth - marginX, 25, { align: 'right' });
+
+    y += 10;
+    doc.setDrawColor(220, 210, 214);
+    doc.line(marginX, y, pageWidth - marginX, y);
+    y += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(110, 31, 61);
+    doc.text('Producto', marginX + imgSize + 6, y);
+    doc.text('Cant.', 132, y);
+    doc.text('Precio', 150, y);
+    doc.text('Subtotal', pageWidth - marginX, y, { align: 'right' });
+    y += 4;
+    doc.line(marginX, y, pageWidth - marginX, y);
+    y += 6;
+
     let total = 0;
-    cart.forEach(item => {
-      msg += `• ${item.name} x${item.quantity} - RD$ ${(item.price * item.quantity).toLocaleString()}\n`;
-      total += item.price * item.quantity;
-    });
-    msg += `\nTotal: RD$ ${total.toLocaleString()}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+
+    for (const item of cart){
+      if (y > 250){ doc.addPage(); y = 20; }
+
+      const rowTopY = y;
+      const dataUrl = await loadImageAsDataURL(item.image);
+      if (dataUrl){
+        try{ doc.addImage(dataUrl, 'JPEG', marginX, y - 5, imgSize, imgSize); }
+        catch(e){ /* si la imagen falla, seguimos sin ella */ }
+      }
+
+      const textX = marginX + imgSize + 6;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(36, 16, 23);
+      const nameLines = doc.splitTextToSize(item.name, 60);
+      doc.text(nameLines, textX, y);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 138, 142);
+      doc.text(item.category, textX, y + nameLines.length * 4);
+
+      doc.setFontSize(9);
+      doc.setTextColor(36, 16, 23);
+      doc.text(String(item.quantity), 132, y);
+      doc.text(`RD$ ${item.price.toLocaleString()}`, 150, y);
+      const subtotal = item.price * item.quantity;
+      total += subtotal;
+      doc.text(`RD$ ${subtotal.toLocaleString()}`, pageWidth - marginX, y, { align: 'right' });
+
+      y = Math.max(y + imgSize - 3, rowTopY + nameLines.length * 4 + 8);
+      doc.setDrawColor(240, 235, 229);
+      doc.line(marginX, y, pageWidth - marginX, y);
+      y += 8;
+    }
+
+    if (y > 255){ doc.addPage(); y = 20; }
+    y += 4;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(84, 23, 47);
+    doc.text('Total', 150, y);
+    doc.text(`RD$ ${total.toLocaleString()}`, pageWidth - marginX, y, { align: 'right' });
+
+    y += 14;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(150, 138, 142);
+    doc.text('Gracias por tu compra. Este documento es un resumen del pedido, no es un comprobante fiscal.', marginX, y);
+
+    return doc;
+  }
+
+  async function checkout(){
+    if (cart.length === 0){ showToast('Tu neceser está vacío'); return; }
+
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    const originalHTML = checkoutBtn.innerHTML;
+    checkoutBtn.disabled = true;
+    checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando factura…';
+
+    try{
+      const doc = await generateInvoicePDF();
+      const fileName = `Factura-VanessaGlow-${Date.now()}.pdf`;
+      doc.save(fileName);
+
+      const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      let msg = 'Hola! Quiero pedir los productos de mi factura adjunta.\n\n';
+      msg += `Total: RD$ ${total.toLocaleString()}\n\n`;
+      msg += 'Adjunto el PDF que acabo de descargar 📎';
+
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+      showToast('Factura descargada — adjúntala en el chat de WhatsApp');
+    } catch(err){
+      console.error(err);
+      showToast('No se pudo generar la factura. Intenta de nuevo.');
+    } finally {
+      checkoutBtn.disabled = false;
+      checkoutBtn.innerHTML = originalHTML;
+    }
+  }
+
+  async function sendInvoiceByEmail(){
+    if (cart.length === 0){ showToast('Tu neceser está vacío'); return; }
+
+    const emailInput = document.getElementById('customerEmail');
+    const email = emailInput.value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      showToast('Escribe un correo válido');
+      emailInput.focus();
+      return;
+    }
+
+    if (!window.emailjs || EMAILJS_PUBLIC_KEY === 't07iFZ7RI2_FvCtF7'){
+      showToast('Falta configurar EmailJS en el código');
+      return;
+    }
+
+    const emailBtn = document.querySelector('.email-btn');
+    const originalHTML = emailBtn.innerHTML;
+    emailBtn.disabled = true;
+    emailBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando…';
+
+    try{
+      const doc = await generateInvoicePDF();
+      const pdfDataUri = doc.output('datauristring');
+      const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      const orderSummary = cart
+        .map(i => `${i.name} x${i.quantity} — RD$ ${(i.price * i.quantity).toLocaleString()}`)
+        .join('\n');
+
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: email,
+        order_summary: orderSummary,
+        total: `RD$ ${total.toLocaleString()}`,
+        invoice_pdf: pdfDataUri
+      });
+
+      showToast(`✓ Factura enviada a ${email}`);
+      emailInput.value = '';
+    } catch(err){
+      console.error(err);
+      showToast('No se pudo enviar el correo. Intenta de nuevo.');
+    } finally {
+      emailBtn.disabled = false;
+      emailBtn.innerHTML = originalHTML;
+    }
   }
 
   function clearCart(){
