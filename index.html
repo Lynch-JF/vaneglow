@@ -1,1136 +1,817 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vanessa Glow Makeup - Catálogo</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #6B2C4D;
-            --gold: #C4A961;
-            --cream: #F8F5F0;
-            --light-bg: #FAFAF9;
-            --text-dark: #1A1A1A;
-            --text-light: #6B6B6B;
-            --border: #E8E8E8;
-            --danger: #E63E82;
-            --success: #4CAF50;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-bg);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        /* Header */
-        header {
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            min-width: 250px;
-        }
-
-        .logo-section img {
-            height: 70px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .logo-text h1 {
-            font-size: 1.8rem;
-            font-style: italic;
-            color: var(--primary);
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .logo-text p {
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin: 0;
-        }
-
-        .search-container {
-            flex: 1;
-            max-width: 400px;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .search-container input {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-
-        .search-container input:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(196, 169, 97, 0.1);
-        }
-
-        .search-container button {
-            padding: 0.8rem 1.2rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .search-container button:hover {
-            background: #5a1f3d;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            font-size: 1.3rem;
-            cursor: pointer;
-            color: var(--text-dark);
-            position: relative;
-            transition: all 0.3s;
-        }
-
-        .action-btn:hover {
-            color: var(--gold);
-        }
-
-        .badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--danger);
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-
-        /* Nav Categories */
-        .nav-categories {
-            display: flex;
-            gap: 2rem;
-            padding: 0 2rem;
-            border-top: 1px solid var(--border);
-            overflow-x: auto;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        .nav-categories a {
-            padding: 1rem 0;
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 500;
-            font-size: 0.95rem;
-            border-bottom: 3px solid transparent;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-
-        .nav-categories a:hover,
-        .nav-categories a.active {
-            color: var(--primary);
-            border-bottom-color: var(--gold);
-        }
-
-        /* Hero Banner */
-        .hero-banner {
-            background: linear-gradient(135deg, #FFE5F0 0%, #FFF0F5 100%);
-            padding: 3rem 2rem;
-            max-width: 1600px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 3rem;
-            border-radius: 12px;
-            margin-bottom: 3rem;
-        }
-
-        .hero-content h2 {
-            font-size: 2.5rem;
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .hero-content h2 .highlight {
-            color: var(--danger);
-        }
-
-        .hero-content p {
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-        }
-
-        .hero-btn {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
-            background: var(--danger);
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .hero-btn:hover {
-            background: #d63170;
-            transform: translateY(-2px);
-        }
-
-        .hero-image {
-            flex: 1;
-            text-align: center;
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hero-image img {
-            max-width: 100%;
-            height: auto;
-            max-height: 300px;
-        }
-
-        /* Main Container */
-        .main-container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 2rem;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0 2rem 3rem;
-        }
-
-        /* Sidebar Filters */
-        .filters-sidebar {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            height: fit-content;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 80px;
-        }
-
-        .filter-group {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .filter-group:last-child {
-            border-bottom: none;
-        }
-
-        .filter-title {
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .filter-option {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-        }
-
-        .filter-option input {
-            cursor: pointer;
-        }
-
-        .filter-option label {
-            cursor: pointer;
-            flex: 1;
-        }
-
-        /* Content Area */
-        .content-area {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .catalog-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .catalog-header h2 {
-            font-size: 1.5rem;
-            color: var(--text-dark);
-        }
-
-        .sort-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .sort-select {
-            padding: 0.6rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: white;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .view-btn {
-            width: 36px;
-            height: 36px;
-            border: 1px solid var(--border);
-            background: white;
-            cursor: pointer;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .view-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* Products Grid */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .product-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        }
-
-        .product-image-wrapper {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            background: linear-gradient(135deg, #fff0f5 0%, #ffe5ed 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: var(--danger);
-            color: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .wishlist-icon {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 36px;
-            height: 36px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .wishlist-icon:hover,
-        .wishlist-icon.active {
-            color: var(--danger);
-        }
-
-        .product-info {
-            padding: 1.2rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-category {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .product-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 0.5rem;
-            line-height: 1.4;
-            flex: 1;
-        }
-
-        .product-rating {
-            display: flex;
-            gap: 0.2rem;
-            margin-bottom: 0.75rem;
-            align-items: center;
-        }
-
-        .star {
-            color: var(--gold);
-            font-size: 0.85rem;
-        }
-
-        .rating-count {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            margin-left: 0.5rem;
-        }
-
-        .product-price {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .price-current {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--danger);
-        }
-
-        .price-original {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            text-decoration: line-through;
-        }
-
-        .add-to-cart-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .add-to-cart-btn:hover {
-            background: #5a1f3d;
-        }
-
-        .add-to-cart-btn i {
-            font-size: 1rem;
-        }
-
-        /* Cart Sidebar */
-        .cart-sidebar {
-            position: fixed;
-            right: -420px;
-            top: 0;
-            width: 420px;
-            height: 100vh;
-            background: white;
-            box-shadow: -4px 0 16px rgba(0,0,0,0.15);
-            transition: right 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cart-sidebar.active {
-            right: 0;
-        }
-
-        .cart-header {
-            background: var(--primary);
-            color: white;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.3rem;
-        }
-
-        .cart-header button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .cart-items {
-            flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-        }
-
-        .cart-item {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .cart-item-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        .cart-item-details {
-            flex: 1;
-        }
-
-        .cart-item-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .cart-item-price {
-            color: var(--danger);
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-        }
-
-        .qty-controls {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .qty-btn {
-            width: 24px;
-            height: 24px;
-            border: 1px solid var(--border);
-            background: white;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-
-        .remove-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .empty-cart {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--text-light);
-            text-align: center;
-        }
-
-        .empty-cart i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .cart-footer {
-            padding: 1.5rem;
-            border-top: 1px solid var(--border);
-            background: var(--cream);
-        }
-
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            padding: 1rem;
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .checkout-btn:hover {
-            background: #45a049;
-        }
-
-        .clear-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--success);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            animation: slideIn 0.3s ease;
-            z-index: 3000;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .hero-banner {
-                flex-direction: column;
-                padding: 2rem;
-            }
-
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-
-            .filters-sidebar {
-                position: sticky;
-                top: auto;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-top {
-                padding: 1rem;
-                flex-direction: column;
-            }
-
-            .logo-section {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .search-container {
-                width: 100%;
-            }
-
-            .nav-categories {
-                padding: 0 1rem;
-                gap: 1rem;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 1rem;
-            }
-
-            .cart-sidebar {
-                width: 100%;
-                right: -100%;
-            }
-
-            .filters-sidebar {
-                display: none;
-            }
-
-            .catalog-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VanessaGlow — Catálogo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#241017;
+    --paper:#FAF3EA;
+    --paper-dim:#F2E9DC;
+    --wine:#6E1F3D;
+    --wine-deep:#54172F;
+    --gold:#B68A46;
+    --gold-soft:#D9B78F;
+    --coral:#E1573A;
+    --sage:#5C7452;
+    --line: rgba(36,16,23,0.12);
+    --shadow: 0 12px 32px rgba(36,16,23,0.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:500; letter-spacing:-0.01em;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  ::selection{background:var(--gold-soft); color:var(--ink);}
+
+  .mono{font-family:'Space Mono', monospace;}
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--wine);
+  }
+
+  /* ===== Swatch strip — signature element ===== */
+  .swatch-strip{display:flex; gap:5px; align-items:center;}
+  .swatch-strip span{
+    width:9px; height:9px; border-radius:50%;
+    display:inline-block;
+    box-shadow: inset 0 0 0 1px rgba(36,16,23,0.08);
+  }
+  .swatch-strip.line span{width:auto; height:3px; flex:1; border-radius:2px;}
+
+  /* ===== Header ===== */
+  header{
+    background:var(--paper);
+    position:sticky; top:0; z-index:100;
+    border-bottom:1px solid var(--line);
+  }
+  .header-top{
+    max-width:1400px; margin:0 auto;
+    display:flex; align-items:center; gap:2rem;
+    padding:1.1rem 2rem;
+    flex-wrap:wrap;
+  }
+  .logo-mark{
+    display:flex; flex-direction:column; gap:0.35rem;
+    min-width:180px;
+  }
+  .logo-mark .wordmark{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:1.7rem;
+    color:var(--wine-deep);
+    line-height:1;
+  }
+  .logo-mark .swatch-strip span:nth-child(1){background:var(--wine);}
+  .logo-mark .swatch-strip span:nth-child(2){background:var(--coral);}
+  .logo-mark .swatch-strip span:nth-child(3){background:var(--gold);}
+  .logo-mark .swatch-strip span:nth-child(4){background:var(--sage);}
+  .logo-mark .swatch-strip span:nth-child(5){background:var(--gold-soft);}
+
+  .search-container{
+    flex:1; max-width:420px; min-width:200px;
+    display:flex; align-items:center;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:white;
+    padding:0 0.25rem 0 1rem;
+  }
+  .search-container input{
+    flex:1; border:none; outline:none; background:transparent;
+    padding:0.7rem 0; font-family:'Work Sans'; font-size:0.92rem; color:var(--ink);
+  }
+  .search-container input::placeholder{color:#9c8f92;}
+  .search-container button{
+    border:none; background:var(--ink); color:var(--paper);
+    width:38px; height:32px; border-radius:2px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .2s;
+  }
+  .search-container button:hover{background:var(--wine);}
+
+  .header-actions{display:flex; gap:1.4rem; align-items:center;}
+  .action-btn{
+    background:none; border:none; font-size:1.15rem; cursor:pointer;
+    color:var(--ink); position:relative; padding:0.4rem;
+    transition:color .2s;
+  }
+  .action-btn:hover{color:var(--wine);}
+  .action-btn.is-active i{font-weight:900; color:var(--coral);}
+  .badge{
+    position:absolute; top:-2px; right:-4px;
+    background:var(--coral); color:white;
+    border-radius:50%; width:17px; height:17px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.62rem; font-family:'Space Mono'; font-weight:700;
+  }
+
+  .nav-categories{
+    max-width:1400px; margin:0 auto;
+    display:flex; gap:0.4rem; padding:0 2rem;
+    overflow-x:auto;
+  }
+  .nav-categories button{
+    display:flex; align-items:center; gap:0.5rem;
+    padding:0.85rem 0.9rem;
+    background:none; border:none; cursor:pointer;
+    font-family:'Work Sans'; font-weight:500; font-size:0.88rem;
+    color:var(--ink); opacity:0.6;
+    border-bottom:2px solid transparent;
+    white-space:nowrap;
+    transition:all .2s;
+  }
+  .nav-categories button .dot{width:7px; height:7px; border-radius:50%; flex-shrink:0;}
+  .nav-categories button:hover{opacity:1;}
+  .nav-categories button.active{
+    opacity:1; color:var(--wine-deep);
+    border-bottom-color:var(--gold);
+  }
+
+  /* ===== Hero ===== */
+  .hero{
+    max-width:1400px; margin:0 auto; padding:3.5rem 2rem 3rem;
+    display:grid; grid-template-columns: 1.1fr 0.9fr; gap:3rem; align-items:center;
+  }
+  .hero-eyebrow{margin-bottom:1rem;}
+  .hero h2{
+    font-size:clamp(2.1rem, 4vw, 3.2rem);
+    line-height:1.05;
+    color:var(--ink);
+    margin-bottom:1.1rem;
+  }
+  .hero h2 em{font-style:italic; color:var(--wine);}
+  .hero p{color:#5a4d51; font-size:1.02rem; max-width:38ch; margin-bottom:1.6rem;}
+  .hero-btn{
+    display:inline-flex; align-items:center; gap:0.6rem;
+    padding:0.85rem 1.5rem;
+    background:var(--ink); color:var(--paper);
+    text-decoration:none; border-radius:2px;
+    font-weight:600; font-size:0.92rem;
+    transition:all .2s;
+  }
+  .hero-btn:hover{background:var(--wine); transform:translateX(2px);}
+
+  .hero-visual{
+    aspect-ratio:4/3;
+    border-radius:4px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5), transparent 55%),
+      linear-gradient(135deg, var(--wine) 0%, var(--wine-deep) 55%, var(--ink) 100%);
+    position:relative;
+    overflow:hidden;
+    display:flex; align-items:flex-end; padding:1.6rem;
+  }
+  .hero-visual .strip{
+    display:flex; width:100%; gap:6px;
+  }
+  .hero-visual .strip span{
+    height:34px; flex:1; border-radius:2px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+
+  /* ===== Layout ===== */
+  .main-container{
+    max-width:1400px; margin:0 auto;
+    display:grid; grid-template-columns:230px 1fr; gap:2.2rem;
+    padding:0 2rem 4rem;
+  }
+
+  .filters-sidebar{
+    background:white;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.4rem;
+    height:fit-content;
+    position:sticky; top:132px;
+  }
+  .filter-group{padding-bottom:1.4rem; margin-bottom:1.4rem; border-bottom:1px solid var(--line);}
+  .filter-group:last-child{border:none; margin:0; padding:0;}
+  .filter-title{
+    font-family:'Space Mono'; font-size:0.68rem; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--wine); margin-bottom:0.9rem;
+  }
+  .filter-option{
+    display:flex; align-items:center; gap:0.6rem;
+    margin-bottom:0.65rem; cursor:pointer; font-size:0.88rem;
+  }
+  .filter-option input{accent-color:var(--wine); cursor:pointer;}
+  .filter-option label{cursor:pointer;}
+  .price-range{display:flex; gap:0.5rem;}
+  .price-range input{
+    width:50%; padding:0.5rem; border:1px solid var(--line);
+    border-radius:2px; font-family:'Work Sans'; font-size:0.85rem;
+  }
+  .clear-filters{
+    margin-top:1rem; width:100%; padding:0.55rem;
+    background:none; border:1px solid var(--line); border-radius:2px;
+    font-size:0.8rem; color:#8a7a7e; cursor:pointer;
+  }
+  .clear-filters:hover{border-color:var(--wine); color:var(--wine);}
+
+  .catalog-header{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    margin-bottom:1.7rem; gap:1rem; flex-wrap:wrap;
+  }
+  .catalog-header h2{font-size:1.4rem; color:var(--ink);}
+  .catalog-header .count{font-size:0.85rem; color:#8a7a7e; margin-top:0.2rem;}
+  .sort-select{
+    padding:0.6rem 1rem; border:1px solid var(--line); border-radius:2px;
+    background:white; cursor:pointer; font-size:0.85rem; font-family:'Work Sans';
+  }
+
+  .products-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr));
+    gap:1.5rem;
+  }
+
+  .product-card{
+    background:white; border:1px solid var(--line); border-radius:4px;
+    overflow:hidden; display:flex; flex-direction:column;
+    transition:box-shadow .25s, transform .25s;
+  }
+  .product-card:hover{box-shadow:var(--shadow); transform:translateY(-3px);}
+
+  .product-photo{
+    position:relative; aspect-ratio:1/0.95;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .product-photo .icon{font-size:2rem; color:rgba(255,255,255,0.85);}
+  .product-badge{
+    position:absolute; top:10px; right:10px;
+    background:var(--ink); color:var(--paper);
+    padding:0.3rem 0.6rem; border-radius:2px;
+    font-family:'Space Mono'; font-size:0.62rem; letter-spacing:0.05em;
+    text-transform:uppercase;
+  }
+  .wishlist-icon{
+    position:absolute; top:10px; left:10px;
+    width:32px; height:32px; border-radius:50%;
+    background:rgba(255,255,255,0.92);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:0.85rem; color:var(--ink);
+    transition:all .2s;
+  }
+  .wishlist-icon:hover{color:var(--coral);}
+  .wishlist-icon.active{color:var(--coral); background:white;}
+  .wishlist-icon.active i{font-weight:900;}
+
+  .card-swatches{
+    position:absolute; bottom:10px; left:10px; right:10px;
+    display:flex; gap:4px;
+    opacity:0; transform:translateY(6px);
+    transition:all .25s;
+  }
+  .product-card:hover .card-swatches{opacity:1; transform:translateY(0);}
+  .card-swatches span{
+    flex:1; height:5px; border-radius:2px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .product-info{padding:1.05rem 1.1rem 1.2rem; display:flex; flex-direction:column; flex:1;}
+  .product-category{
+    font-family:'Space Mono'; font-size:0.62rem; letter-spacing:0.09em;
+    text-transform:uppercase; color:var(--gold); margin-bottom:0.45rem;
+  }
+  .product-name{
+    font-family:'Work Sans'; font-weight:600; font-size:0.94rem;
+    color:var(--ink); margin-bottom:0.5rem; flex:1; line-height:1.35;
+  }
+  .product-rating{display:flex; align-items:center; gap:0.15rem; margin-bottom:0.7rem;}
+  .star{color:var(--gold); font-size:0.78rem;}
+  .rating-count{font-family:'Space Mono'; font-size:0.68rem; color:#9c8f92; margin-left:0.4rem;}
+  .product-price{display:flex; align-items:baseline; gap:0.5rem; margin-bottom:0.9rem;}
+  .price-current{font-family:'Space Mono'; font-weight:700; font-size:1.05rem; color:var(--wine-deep);}
+  .price-original{font-family:'Space Mono'; font-size:0.75rem; color:#b3a5a8; text-decoration:line-through;}
+
+  .add-to-cart-btn{
+    width:100%; padding:0.7rem; background:var(--ink); color:var(--paper);
+    border:none; border-radius:2px; cursor:pointer; font-weight:600; font-size:0.85rem;
+    display:flex; align-items:center; justify-content:center; gap:0.5rem;
+    transition:background .2s;
+  }
+  .add-to-cart-btn:hover{background:var(--wine);}
+
+  .empty-state{
+    grid-column:1/-1; text-align:center; padding:4rem 1rem; color:#9c8f92;
+  }
+  .empty-state i{font-size:2rem; margin-bottom:1rem; color:var(--gold-soft);}
+
+  /* ===== Cart ===== */
+  .cart-sidebar{
+    position:fixed; right:-440px; top:0; width:420px; max-width:92vw; height:100vh;
+    background:var(--paper); box-shadow:-8px 0 32px rgba(36,16,23,0.18);
+    transition:right .35s ease; z-index:1000; display:flex; flex-direction:column;
+  }
+  .cart-sidebar.active{right:0;}
+  .cart-header{
+    background:var(--ink); color:var(--paper); padding:1.4rem 1.6rem;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .cart-header .title{font-family:'Fraunces'; font-style:italic; font-size:1.3rem;}
+  .cart-header button{background:none; border:none; color:var(--paper); font-size:1.3rem; cursor:pointer;}
+  .cart-items{flex:1; padding:1.4rem 1.6rem; overflow-y:auto;}
+  .cart-item{display:flex; gap:1rem; margin-bottom:1.3rem; padding-bottom:1.3rem; border-bottom:1px solid var(--line);}
+  .cart-item-photo{
+    width:64px; height:64px; border-radius:3px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; color:white; font-size:1rem;
+  }
+  .cart-item-details{flex:1;}
+  .cart-item-name{font-weight:600; font-size:0.88rem; margin-bottom:0.35rem;}
+  .cart-item-price{font-family:'Space Mono'; color:var(--wine-deep); font-weight:700; font-size:0.88rem; margin-bottom:0.5rem;}
+  .qty-controls{display:flex; gap:0.5rem; align-items:center;}
+  .qty-btn{
+    width:22px; height:22px; border:1px solid var(--line); background:white;
+    cursor:pointer; border-radius:2px; font-size:0.8rem;
+  }
+  .qty-controls span{font-family:'Space Mono'; font-size:0.85rem; min-width:14px; text-align:center;}
+  .remove-btn{
+    background:none; color:#b3a5a8; border:none; padding:0.3rem 0.5rem;
+    cursor:pointer; font-size:0.72rem; margin-left:auto; text-decoration:underline;
+  }
+  .remove-btn:hover{color:var(--coral);}
+
+  .empty-cart{display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#9c8f92; text-align:center; padding:2rem;}
+  .empty-cart i{font-size:2.2rem; margin-bottom:1rem; color:var(--gold-soft);}
+
+  .cart-footer{padding:1.4rem 1.6rem; border-top:1px solid var(--line); background:white;}
+  .cart-total{display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;}
+  .cart-total .label{font-size:0.9rem; color:#5a4d51;}
+  .cart-total .amount{font-family:'Space Mono'; font-weight:700; font-size:1.25rem; color:var(--wine-deep);}
+  .checkout-btn{
+    width:100%; padding:0.9rem; background:var(--sage); color:white; border:none;
+    border-radius:2px; cursor:pointer; font-weight:600; margin-bottom:0.6rem;
+    display:flex; align-items:center; justify-content:center; gap:0.6rem; font-size:0.92rem;
+    transition:background .2s;
+  }
+  .checkout-btn:hover{background:#4a5e42;}
+  .clear-btn{
+    width:100%; padding:0.65rem; background:none; color:#9c8f92; border:1px solid var(--line);
+    border-radius:2px; cursor:pointer; font-size:0.82rem;
+  }
+  .clear-btn:hover{border-color:var(--coral); color:var(--coral);}
+
+  .overlay{
+    display:none; position:fixed; inset:0; background:rgba(36,16,23,0.45); z-index:999;
+    backdrop-filter:blur(1px);
+  }
+
+  .toast{
+    position:fixed; bottom:2rem; right:2rem; background:var(--ink); color:var(--paper);
+    padding:0.9rem 1.3rem; border-radius:3px; box-shadow:0 10px 24px rgba(0,0,0,0.25);
+    z-index:3000; font-size:0.88rem; display:flex; align-items:center; gap:0.6rem;
+    animation:slideIn .3s ease;
+  }
+  @keyframes slideIn{from{transform:translateX(20px); opacity:0;} to{transform:translateX(0); opacity:1;}}
+
+  @media (max-width:1024px){
+    .hero{grid-template-columns:1fr; padding-top:2.2rem;}
+    .main-container{grid-template-columns:1fr;}
+    .filters-sidebar{position:static;}
+  }
+  @media (max-width:640px){
+    .header-top{padding:1rem;}
+    .search-container{order:3; max-width:100%;}
+    .products-grid{grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:1rem;}
+    .cart-sidebar{width:100%; right:-100%;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  button:focus-visible, input:focus-visible, a:focus-visible{
+    outline:2px solid var(--wine); outline-offset:2px;
+  }
+</style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-top">
-            <div class="logo-section">
-                <img src="logo.jpeg" alt="Vanessa Glow" onerror="this.style.display='none'">
-                <div class="logo-text">
-                    <h1>VanessaGlow</h1>
-                    <p>Glow · Enhance · Inspire</p>
-                </div>
-            </div>
 
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Buscar productos...">
-                <button onclick="search()"><i class="fas fa-search"></i></button>
-            </div>
-
-            <div class="header-actions">
-                <button class="action-btn" title="Favoritos">
-                    <i class="far fa-heart"></i>
-                    <span class="badge" id="wishlistBadge" style="display:none;">0</span>
-                </button>
-                <button class="action-btn" title="Carrito" onclick="toggleCart()">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span class="badge" id="cartBadge">0</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="nav-categories">
-            <a href="#" class="active" onclick="filterCategory('Todas')">Inicio</a>
-            <a href="#" onclick="filterCategory('Bases & Primers')">Bases</a>
-            <a href="#" onclick="filterCategory('Labiales & Glosses')">Labiales</a>
-            <a href="#" onclick="filterCategory('Sombras & Paletas')">Sombras</a>
-            <a href="#" onclick="filterCategory('Skincare')">Skincare</a>
-            <a href="#" onclick="filterCategory('Herramientas & Accesorios')">Herramientas</a>
-        </nav>
-    </header>
-
-    <!-- Hero Banner -->
-    <div style="padding: 0 2rem;">
-        <div class="hero-banner">
-            <div class="hero-content">
-                <h2>Realza tu <span class="highlight">mejor versión</span></h2>
-                <p>Maquillaje de calidad profesional para cada estilo y ocasión.</p>
-                <a href="#catalog" class="hero-btn">Ver Catálogo <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="hero-image">
-                <i class="fas fa-sparkles" style="font-size: 4rem; color: var(--danger);"></i>
-            </div>
-        </div>
+<header>
+  <div class="header-top">
+    <div class="logo-mark">
+      <span class="wordmark">VanessaGlow</span>
+      <div class="swatch-strip"><span></span><span></span><span></span><span></span><span></span></div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <!-- Sidebar Filters -->
-        <aside class="filters-sidebar">
-            <div class="filter-group">
-                <div class="filter-title">Categorías</div>
-                <div class="filter-option">
-                    <input type="radio" id="cat-todas" name="category" value="Todas" checked onclick="filterCategory(this.value)">
-                    <label for="cat-todas">Todas</label>
-                </div>
-                <div class="filter-option">
-                    <input type="radio" id="cat-bases" name="category" value="Bases & Primers" onclick="filterCategory(this.value)">
-                    <label for="cat-bases">Bases</label>
-                </div>
-                <div class="filter-option">
-                    <input type="radio" id="cat-labiales" name="category" value="Labiales & Glosses" onclick="filterCategory(this.value)">
-                    <label for="cat-labiales">Labiales</label>
-                </div>
-                <div class="filter-option">
-                    <input type="radio" id="cat-sombras" name="category" value="Sombras & Paletas" onclick="filterCategory(this.value)">
-                    <label for="cat-sombras">Sombras</label>
-                </div>
-                <div class="filter-option">
-                    <input type="radio" id="cat-skin" name="category" value="Skincare" onclick="filterCategory(this.value)">
-                    <label for="cat-skin">Skincare</label>
-                </div>
-            </div>
-
-            <div class="filter-group">
-                <div class="filter-title">Rango de Precio</div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="number" placeholder="Min" min="0" style="width: 50%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
-                    <input type="number" placeholder="Max" min="0" style="width: 50%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
-                </div>
-            </div>
-
-            <div class="filter-group">
-                <div class="filter-title">Valoración</div>
-                <div class="filter-option">
-                    <input type="checkbox" id="rating-5">
-                    <label for="rating-5">⭐⭐⭐⭐⭐ (5)</label>
-                </div>
-                <div class="filter-option">
-                    <input type="checkbox" id="rating-4">
-                    <label for="rating-4">⭐⭐⭐⭐ (4+)</label>
-                </div>
-                <div class="filter-option">
-                    <input type="checkbox" id="rating-3">
-                    <label for="rating-3">⭐⭐⭐ (3+)</label>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Content Area -->
-        <div class="content-area">
-            <div class="catalog-header">
-                <h2 id="catalogTitle">Catálogo de Productos</h2>
-                <div class="sort-controls">
-                    <select class="sort-select">
-                        <option>Más relevantes</option>
-                        <option>Menor precio</option>
-                        <option>Mayor precio</option>
-                        <option>Mejor valorados</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="products-grid" id="productsGrid"></div>
-        </div>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Buscar por nombre o categoría…" oninput="renderProducts()">
+      <button onclick="renderProducts()" aria-label="Buscar"><i class="fas fa-search"></i></button>
     </div>
 
-    <!-- Cart Sidebar -->
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <span>Mi Carrito</span>
-            <button onclick="toggleCart()">✕</button>
-        </div>
-        <div class="cart-items" id="cartItems">
-            <div class="empty-cart">
-                <i class="fas fa-shopping-bag"></i>
-                <p>Tu carrito está vacío</p>
-            </div>
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span id="totalPrice">RD$ 0</span>
-            </div>
-            <button class="checkout-btn" onclick="checkout()">
-                <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
-            </button>
-            <button class="clear-btn" onclick="clearCart()">Vaciar Carrito</button>
-        </div>
+    <div class="header-actions">
+      <button class="action-btn" id="wishlistBtn" title="Favoritos" onclick="showToast('Tus favoritos aparecen marcados en cada producto ♥')">
+        <i class="far fa-heart"></i>
+        <span class="badge" id="wishlistBadge" style="display:none;">0</span>
+      </button>
+      <button class="action-btn" title="Neceser" onclick="toggleCart()">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </div>
+
+  <nav class="nav-categories" id="navCategories"></nav>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow hero-eyebrow">Colección actual</div>
+    <h2>Cada tono cuenta<br><em>tu</em> historia.</h2>
+    <p>Maquillaje de calidad profesional, curado por acabado y pigmento — no por tendencia. Encuentra tu tono, pide por WhatsApp.</p>
+    <a href="#catalog" class="hero-btn">Ver catálogo <i class="fas fa-arrow-right"></i></a>
+  </div>
+  <div class="hero-visual">
+    <div class="strip">
+      <span style="background:var(--gold-soft)"></span>
+      <span style="background:var(--coral)"></span>
+      <span style="background:var(--wine)"></span>
+      <span style="background:var(--gold)"></span>
+      <span style="background:var(--sage)"></span>
+      <span style="background:#8a5a6b"></span>
+    </div>
+  </div>
+</section>
+
+<div class="main-container" id="catalog">
+  <aside class="filters-sidebar">
+    <div class="filter-group">
+      <div class="filter-title">Precio</div>
+      <div class="price-range">
+        <input type="number" id="priceMin" placeholder="Mín" min="0" oninput="renderProducts()">
+        <input type="number" id="priceMax" placeholder="Máx" min="0" oninput="renderProducts()">
+      </div>
     </div>
 
-    <!-- Overlay -->
-    <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;" onclick="toggleCart()"></div>
+    <div class="filter-group">
+      <div class="filter-title">Valoración</div>
+      <div class="filter-option">
+        <input type="checkbox" id="rating-4" onchange="renderProducts()">
+        <label for="rating-4">★★★★ y más</label>
+      </div>
+      <div class="filter-option">
+        <input type="checkbox" id="rating-45" onchange="renderProducts()">
+        <label for="rating-45">★★★★½ y más</label>
+      </div>
+    </div>
 
-    <script>
-        const STORAGE_KEY = 'vanessaGlowProducts';
-        const CART_KEY = 'vanessaGlowCart';
-        const WHATSAPP_NUMBER = '18095551234';
+    <div class="filter-group">
+      <div class="filter-title">Ofertas</div>
+      <div class="filter-option">
+        <input type="checkbox" id="onSale" onchange="renderProducts()">
+        <label for="onSale">Solo con descuento</label>
+      </div>
+    </div>
 
-        let currentCategory = 'Todas';
-        let cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    <button class="clear-filters" onclick="clearFilters()">Limpiar filtros</button>
+  </aside>
 
-        const products = [
-            {
-                id: 1,
-                name: 'Elf Glow Reviver Melting Lip Balm',
-                category: 'Labiales & Glosses',
-                price: 450,
-                originalPrice: 500,
-                image: 'https://via.placeholder.com/240x220?text=Elf+Lip+Balm',
-                rating: 4.5,
-                reviews: 23,
-                badge: 'NUEVO'
-            },
-            {
-                id: 2,
-                name: 'Elf Jelly Pop Gloss Primer',
-                category: 'Labiales & Glosses',
-                price: 380,
-                originalPrice: 450,
-                image: 'https://via.placeholder.com/240x220?text=Elf+Primer',
-                rating: 4.3,
-                reviews: 18
-            },
-            {
-                id: 3,
-                name: 'Revlon PhotoReady Prime Plus',
-                category: 'Bases & Primers',
-                price: 620,
-                originalPrice: 750,
-                image: 'https://via.placeholder.com/240x220?text=Revlon',
-                rating: 4.7,
-                reviews: 42,
-                badge: '-15%'
-            },
-            {
-                id: 4,
-                name: 'BareMinerals Original Foundation',
-                category: 'Bases & Primers',
-                price: 890,
-                originalPrice: 990,
-                image: 'https://via.placeholder.com/240x220?text=BareMinerals',
-                rating: 4.8,
-                reviews: 55
-            },
-            {
-                id: 5,
-                name: 'Maybelline Super Stay Vinyl Ink',
-                category: 'Labiales & Glosses',
-                price: 520,
-                originalPrice: 600,
-                image: 'https://via.placeholder.com/240x220?text=Maybelline',
-                rating: 4.6,
-                reviews: 31
-            }
-        ];
+  <div class="content-area">
+    <div class="catalog-header">
+      <div>
+        <h2 id="catalogTitle">Catálogo de productos</h2>
+        <div class="count" id="catalogCount"></div>
+      </div>
+      <select class="sort-select" id="sortSelect" onchange="renderProducts()">
+        <option value="relevance">Más relevantes</option>
+        <option value="price-asc">Menor precio</option>
+        <option value="price-desc">Mayor precio</option>
+        <option value="rating">Mejor valorados</option>
+      </select>
+    </div>
 
-        function renderProducts() {
-            const filtered = currentCategory === 'Todas' 
-                ? products 
-                : products.filter(p => p.category === currentCategory);
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</div>
 
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = filtered.map(p => `
-                <div class="product-card">
-                    <div class="product-image-wrapper">
-                        <img src="${p.image}" class="product-image" alt="${p.name}">
-                        ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
-                        <div class="wishlist-icon" onclick="toggleWishlist(${p.id})">
-                            <i class="far fa-heart"></i>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <div class="product-category">${p.category}</div>
-                        <h3 class="product-name">${p.name}</h3>
-                        <div class="product-rating">
-                            ${Array(Math.floor(p.rating)).fill('<span class="star">★</span>').join('')}
-                            <span class="rating-count">(${p.reviews})</span>
-                        </div>
-                        <div class="product-price">
-                            <span class="price-current">RD$ ${p.price}</span>
-                            ${p.originalPrice ? `<span class="price-original">RD$ ${p.originalPrice}</span>` : ''}
-                        </div>
-                        <button class="add-to-cart-btn" onclick="addToCart(${p.id})">
-                            <i class="fas fa-shopping-bag"></i> Agregar
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <span class="title">Tu neceser</span>
+    <button onclick="toggleCart()" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span class="label">Total</span>
+      <span class="amount" id="totalPrice">RD$ 0</span>
+    </div>
+    <button class="checkout-btn" onclick="checkout()">
+      <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
+    </button>
+    <button class="clear-btn" onclick="clearCart()">Vaciar neceser</button>
+  </div>
+</div>
 
-        function filterCategory(category) {
-            currentCategory = category;
-            document.querySelectorAll('input[name="category"]').forEach(r => r.checked = false);
-            document.getElementById('catalogTitle').textContent = 
-                category === 'Todas' ? 'Catálogo de Productos' : `${category}`;
-            renderProducts();
-        }
+<div class="overlay" id="overlay" onclick="toggleCart()"></div>
 
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            const existing = cart.find(item => item.id === productId);
-            
-            if (existing) {
-                existing.quantity++;
-            } else {
-                cart.push({ ...product, quantity: 1 });
-            }
-            
-            saveCart();
-            showToast(`✓ ${product.name} agregado`);
-        }
+<script>
+  const WHATSAPP_NUMBER = '18095551234'; // reemplaza con tu número real
 
-        function updateCartUI() {
-            const cartItemsEl = document.getElementById('cartItems');
-            const badgeEl = document.getElementById('cartBadge');
-            const totalEl = document.getElementById('totalPrice');
+  const categories = [
+    { id:'Todas', label:'Todo', color:null },
+    { id:'Bases & Primers', label:'Bases', color:'#D9B78F' },
+    { id:'Labiales & Glosses', label:'Labiales', color:'#E1573A' },
+    { id:'Sombras & Paletas', label:'Sombras', color:'#B68A46' },
+    { id:'Skincare', label:'Skincare', color:'#5C7452' },
+    { id:'Herramientas & Accesorios', label:'Herramientas', color:'#7A7267' },
+  ];
 
-            badgeEl.textContent = cart.length;
+  const products = [
+    {
+      id:1, name:'Elf Glow Reviver Melting Lip Balm', category:'Labiales & Glosses',
+      price:450, originalPrice:500, rating:4.5, reviews:23, badge:'Nuevo',
+      photoGradient:['#B23A2E','#6E1F3D'], swatches:['#E1573A','#B23A2E','#8a5a6b']
+    },
+    {
+      id:2, name:'Elf Jelly Pop Gloss Primer', category:'Labiales & Glosses',
+      price:380, originalPrice:450, rating:4.3, reviews:18, badge:null,
+      photoGradient:['#D9737C','#6E1F3D'], swatches:['#E88C93','#D9737C','#B68A46']
+    },
+    {
+      id:3, name:'Revlon PhotoReady Prime Plus', category:'Bases & Primers',
+      price:620, originalPrice:750, rating:4.7, reviews:42, badge:'-15%',
+      photoGradient:['#D9B78F','#8a6d4a'], swatches:['#E8D3B0','#D9B78F','#B68A46']
+    },
+    {
+      id:4, name:'BareMinerals Original Foundation', category:'Bases & Primers',
+      price:890, originalPrice:990, rating:4.8, reviews:55, badge:null,
+      photoGradient:['#C99A6C','#7A5A3A'], swatches:['#E0B98A','#C99A6C','#8a6d4a']
+    },
+    {
+      id:5, name:'Maybelline Super Stay Vinyl Ink', category:'Labiales & Glosses',
+      price:520, originalPrice:600, rating:4.6, reviews:31, badge:null,
+      photoGradient:['#8C1F3B','#241017'], swatches:['#B23A2E','#8C1F3B','#54172F']
+    },
+    {
+      id:6, name:'Urban Decay Naked Reloaded Paleta', category:'Sombras & Paletas',
+      price:1350, originalPrice:1500, rating:4.9, reviews:64, badge:'Top',
+      photoGradient:['#B68A46','#6E1F3D'], swatches:['#D9B78F','#B68A46','#8C1F3B','#54172F']
+    },
+    {
+      id:7, name:'CeraVe Crema Hidratante PM', category:'Skincare',
+      price:980, originalPrice:null, rating:4.7, reviews:38, badge:null,
+      photoGradient:['#8FA680','#4a5e42'], swatches:['#B7C7A9','#8FA680','#4a5e42']
+    },
+    {
+      id:8, name:'Set de Brochas Profesionales (12pz)', category:'Herramientas & Accesorios',
+      price:1150, originalPrice:1400, rating:4.4, reviews:27, badge:'-18%',
+      photoGradient:['#7A7267','#3d3831'], swatches:['#A69C8E','#7A7267','#3d3831']
+    },
+  ];
 
-            if (cart.length === 0) {
-                cartItemsEl.innerHTML = `
-                    <div class="empty-cart">
-                        <i class="fas fa-shopping-bag"></i>
-                        <p>Tu carrito está vacío</p>
-                    </div>
-                `;
-                totalEl.textContent = 'RD$ 0';
-                return;
-            }
+  let currentCategory = 'Todas';
+  let cart = [];
+  let wishlist = new Set();
 
-            let total = 0;
-            cartItemsEl.innerHTML = cart.map(item => {
-                total += item.price * item.quantity;
-                return `
-                    <div class="cart-item">
-                        <img src="${item.image}" class="cart-item-image">
-                        <div class="cart-item-details">
-                            <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">RD$ ${(item.price * item.quantity).toLocaleString()}</div>
-                            <div class="qty-controls">
-                                <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
-                                <span>${item.quantity}</span>
-                                <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
-                                <button class="remove-btn" onclick="removeFromCart(${item.id})">X</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+  function grad(colors){
+    return `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 100%)`;
+  }
 
-            totalEl.textContent = `RD$ ${total.toLocaleString()}`;
-        }
+  function renderNav(){
+    const nav = document.getElementById('navCategories');
+    nav.innerHTML = categories.map(c => `
+      <button class="${c.id === currentCategory ? 'active' : ''}" onclick="filterCategory('${c.id}')">
+        ${c.color ? `<span class="dot" style="background:${c.color}"></span>` : `<span class="dot" style="background:conic-gradient(from 0deg, #D9B78F, #E1573A, #B68A46, #5C7452, #7A7267, #D9B78F)"></span>`}
+        ${c.label}
+      </button>
+    `).join('');
+  }
 
-        function updateQty(productId, change) {
-            const item = cart.find(i => i.id === productId);
-            if (item) {
-                item.quantity = Math.max(1, item.quantity + change);
-                saveCart();
-            }
-        }
+  function getFiltered(){
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const min = parseFloat(document.getElementById('priceMin').value) || 0;
+    const max = parseFloat(document.getElementById('priceMax').value) || Infinity;
+    const need4 = document.getElementById('rating-4').checked;
+    const need45 = document.getElementById('rating-45').checked;
+    const saleOnly = document.getElementById('onSale').checked;
+    const sort = document.getElementById('sortSelect').value;
 
-        function removeFromCart(productId) {
-            cart = cart.filter(i => i.id !== productId);
-            saveCart();
-        }
+    let list = products.filter(p => {
+      if (currentCategory !== 'Todas' && p.category !== currentCategory) return false;
+      if (query && !(p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query))) return false;
+      if (p.price < min || p.price > max) return false;
+      if (need45 && p.rating < 4.5) return false;
+      else if (need4 && p.rating < 4) return false;
+      if (saleOnly && !p.originalPrice) return false;
+      return true;
+    });
 
-        function saveCart() {
-            localStorage.setItem(CART_KEY, JSON.stringify(cart));
-            updateCartUI();
-        }
+    if (sort === 'price-asc') list = list.slice().sort((a,b)=>a.price-b.price);
+    else if (sort === 'price-desc') list = list.slice().sort((a,b)=>b.price-a.price);
+    else if (sort === 'rating') list = list.slice().sort((a,b)=>b.rating-a.rating);
 
-        function toggleCart() {
-            document.getElementById('cartSidebar').classList.toggle('active');
-            document.getElementById('overlay').style.display = 
-                document.getElementById('cartSidebar').classList.contains('active') ? 'block' : 'none';
-        }
+    return list;
+  }
 
-        function checkout() {
-            if (cart.length === 0) return;
-            let msg = 'Hola! Quiero pedir:\n\n';
-            let total = 0;
-            cart.forEach(item => {
-                msg += `• ${item.name} x${item.quantity} - RD$ ${(item.price * item.quantity).toLocaleString()}\n`;
-                total += item.price * item.quantity;
-            });
-            msg += `\nTotal: RD$ ${total.toLocaleString()}`;
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
-        }
+  function renderProducts(){
+    renderNav();
+    const filtered = getFiltered();
+    const grid = document.getElementById('productsGrid');
+    document.getElementById('catalogTitle').textContent =
+      currentCategory === 'Todas' ? 'Catálogo de productos' : currentCategory;
+    document.getElementById('catalogCount').textContent =
+      `${filtered.length} producto${filtered.length !== 1 ? 's' : ''}`;
 
-        function clearCart() {
-            if (confirm('¿Vaciar carrito?')) {
-                cart = [];
-                saveCart();
-            }
-        }
+    if (filtered.length === 0){
+      grid.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-magnifying-glass"></i>
+          <p>No encontramos productos con esos filtros.</p>
+        </div>`;
+      return;
+    }
 
-        function toggleWishlist(productId) {
-            showToast('❤️ Agregado a favoritos');
-        }
+    grid.innerHTML = filtered.map(p => `
+      <div class="product-card">
+        <div class="product-photo" style="background:${grad(p.photoGradient)}">
+          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+          <div class="wishlist-icon ${wishlist.has(p.id) ? 'active' : ''}" onclick="toggleWishlist(${p.id})" role="button" aria-label="Agregar a favoritos">
+            <i class="${wishlist.has(p.id) ? 'fas' : 'far'} fa-heart"></i>
+          </div>
+          <i class="fas fa-wand-magic-sparkles icon"></i>
+          <div class="card-swatches">
+            ${p.swatches.map(c => `<span style="background:${c}"></span>`).join('')}
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-category">${p.category}</div>
+          <h3 class="product-name">${p.name}</h3>
+          <div class="product-rating">
+            ${renderStars(p.rating)}
+            <span class="rating-count">(${p.reviews})</span>
+          </div>
+          <div class="product-price">
+            <span class="price-current">RD$ ${p.price.toLocaleString()}</span>
+            ${p.originalPrice ? `<span class="price-original">RD$ ${p.originalPrice.toLocaleString()}</span>` : ''}
+          </div>
+          <button class="add-to-cart-btn" onclick="addToCart(${p.id})">
+            <i class="fas fa-plus"></i> Agregar
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
 
-        function search() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            // Implementar búsqueda
-        }
+  function renderStars(rating){
+    const full = Math.floor(rating);
+    const half = rating - full >= 0.5;
+    let out = '';
+    for (let i=0;i<full;i++) out += '<span class="star">★</span>';
+    if (half) out += '<span class="star">✬</span>';
+    return out;
+  }
 
-        function showToast(msg) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
-        }
+  function filterCategory(id){
+    currentCategory = id;
+    renderProducts();
+  }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProducts();
-            updateCartUI();
-        });
-    </script>
+  function clearFilters(){
+    document.getElementById('priceMin').value = '';
+    document.getElementById('priceMax').value = '';
+    document.getElementById('rating-4').checked = false;
+    document.getElementById('rating-45').checked = false;
+    document.getElementById('onSale').checked = false;
+    document.getElementById('searchInput').value = '';
+    currentCategory = 'Todas';
+    document.getElementById('sortSelect').value = 'relevance';
+    renderProducts();
+  }
+
+  function toggleWishlist(id){
+    if (wishlist.has(id)) wishlist.delete(id);
+    else wishlist.add(id);
+    updateWishlistBadge();
+    renderProducts();
+    showToast(wishlist.has(id) ? '♥ Agregado a favoritos' : 'Quitado de favoritos');
+  }
+
+  function updateWishlistBadge(){
+    const badge = document.getElementById('wishlistBadge');
+    const btn = document.getElementById('wishlistBtn');
+    badge.textContent = wishlist.size;
+    badge.style.display = wishlist.size > 0 ? 'flex' : 'none';
+    btn.classList.toggle('is-active', wishlist.size > 0);
+    btn.querySelector('i').className = wishlist.size > 0 ? 'fas fa-heart' : 'far fa-heart';
+  }
+
+  function addToCart(id){
+    const product = products.find(p => p.id === id);
+    const existing = cart.find(item => item.id === id);
+    if (existing) existing.quantity++;
+    else cart.push({ ...product, quantity:1 });
+    updateCartUI();
+    showToast(`✓ ${product.name} agregado`);
+  }
+
+  function updateQty(id, change){
+    const item = cart.find(i => i.id === id);
+    if (item){
+      item.quantity = Math.max(1, item.quantity + change);
+      updateCartUI();
+    }
+  }
+
+  function removeFromCart(id){
+    cart = cart.filter(i => i.id !== id);
+    updateCartUI();
+  }
+
+  function updateCartUI(){
+    const cartItemsEl = document.getElementById('cartItems');
+    const badgeEl = document.getElementById('cartBadge');
+    const totalEl = document.getElementById('totalPrice');
+    const totalQty = cart.reduce((sum,i)=>sum+i.quantity,0);
+    badgeEl.textContent = totalQty;
+
+    if (cart.length === 0){
+      cartItemsEl.innerHTML = `
+        <div class="empty-cart">
+          <i class="fas fa-shopping-bag"></i>
+          <p>Tu neceser está vacío</p>
+        </div>`;
+      totalEl.textContent = 'RD$ 0';
+      return;
+    }
+
+    let total = 0;
+    cartItemsEl.innerHTML = cart.map(item => {
+      total += item.price * item.quantity;
+      return `
+        <div class="cart-item">
+          <div class="cart-item-photo" style="background:${grad(item.photoGradient)}">
+            <i class="fas fa-wand-magic-sparkles"></i>
+          </div>
+          <div class="cart-item-details">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">RD$ ${(item.price * item.quantity).toLocaleString()}</div>
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="updateQty(${item.id}, -1)">−</button>
+              <span>${item.quantity}</span>
+              <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+              <button class="remove-btn" onclick="removeFromCart(${item.id})">Quitar</button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    totalEl.textContent = `RD$ ${total.toLocaleString()}`;
+  }
+
+  function toggleCart(){
+    const sidebar = document.getElementById('cartSidebar');
+    const overlay = document.getElementById('overlay');
+    sidebar.classList.toggle('active');
+    overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+  }
+
+  function checkout(){
+    if (cart.length === 0){ showToast('Tu neceser está vacío'); return; }
+    let msg = 'Hola! Quiero pedir:\n\n';
+    let total = 0;
+    cart.forEach(item => {
+      msg += `• ${item.name} x${item.quantity} - RD$ ${(item.price * item.quantity).toLocaleString()}\n`;
+      total += item.price * item.quantity;
+    });
+    msg += `\nTotal: RD$ ${total.toLocaleString()}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  function clearCart(){
+    if (cart.length === 0) return;
+    if (confirm('¿Vaciar tu neceser?')){
+      cart = [];
+      updateCartUI();
+    }
+  }
+
+  function showToast(msg){
+    document.querySelectorAll('.toast').forEach(t => t.remove());
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span>${msg}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2200);
+  }
+
+  renderNav();
+  renderProducts();
+  updateCartUI();
+  updateWishlistBadge();
+</script>
 </body>
 </html>
