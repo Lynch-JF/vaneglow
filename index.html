@@ -609,6 +609,59 @@
   .orders-empty{text-align:center; padding:3rem 1rem; color:#9c8f92;}
   .orders-empty i{font-size:1.8rem; margin-bottom:0.8rem; color:var(--gold-soft); display:block;}
 
+  .order-detail-link{
+    background:none; border:none; cursor:pointer; padding:0;
+    font-family:'Space Mono'; font-size:0.7rem; letter-spacing:0.03em;
+    color:var(--wine); text-decoration:underline;
+  }
+  .order-detail-link:hover{color:var(--coral);}
+
+  .order-detail-modal{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:620px; max-width:94vw; max-height:88vh; overflow-y:auto;
+    background:var(--paper); border-radius:8px; z-index:2101;
+    box-shadow:0 24px 60px rgba(36,16,23,0.3);
+    display:none;
+  }
+  .order-detail-modal.active{display:block;}
+  .order-detail-header{
+    background:var(--ink); color:var(--paper); padding:1.3rem 1.6rem;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    position:sticky; top:0; z-index:2;
+  }
+  .order-detail-header .title{font-family:'Fraunces'; font-style:italic; font-size:1.25rem;}
+  .order-detail-header .sub{font-family:'Space Mono'; font-size:0.7rem; opacity:0.75; margin-top:0.3rem;}
+  .order-detail-header button{background:none; border:none; color:var(--paper); font-size:1.2rem; cursor:pointer;}
+  .order-detail-body{padding:1.5rem 1.6rem 1.8rem;}
+  .detail-section{margin-bottom:1.4rem;}
+  .detail-section:last-child{margin-bottom:0;}
+  .detail-section-title{
+    font-family:'Space Mono'; font-size:0.65rem; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--wine); margin-bottom:0.6rem;
+  }
+  .detail-customer-grid{
+    display:grid; grid-template-columns:auto 1fr; gap:0.4rem 0.9rem;
+    font-size:0.88rem; color:var(--ink);
+  }
+  .detail-customer-grid dt{color:#9c8f92; font-family:'Space Mono'; font-size:0.72rem;}
+  .detail-customer-grid dd{font-weight:500;}
+  .detail-items-table{width:100%; border-collapse:collapse; font-size:0.85rem;}
+  .detail-items-table th{
+    text-align:left; font-family:'Space Mono'; font-size:0.65rem; letter-spacing:0.05em;
+    text-transform:uppercase; color:#9c8f92; padding-bottom:0.5rem;
+    border-bottom:1px solid var(--line);
+  }
+  .detail-items-table td{padding:0.7rem 0; border-bottom:1px solid var(--line); vertical-align:top;}
+  .detail-items-table td.num, .detail-items-table th.num{text-align:right; font-family:'Space Mono';}
+  .detail-item-name{font-weight:600; color:var(--ink);}
+  .detail-item-category{font-size:0.72rem; color:#9c8f92; margin-top:0.15rem;}
+  .detail-total-row td{border-bottom:none; padding-top:0.9rem; font-weight:700; font-family:'Space Mono'; font-size:1.05rem; color:var(--wine-deep);}
+  .detail-status-row{display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap;}
+  .detail-status-row select{
+    padding:0.55rem 0.8rem; border:1px solid var(--line); border-radius:2px;
+    font-family:'Work Sans'; font-size:0.85rem; background:white; cursor:pointer;
+  }
+
   .toast{
     position:fixed; bottom:2rem; right:2rem; background:var(--ink); color:var(--paper);
     padding:0.9rem 1.3rem; border-radius:3px; box-shadow:0 10px 24px rgba(0,0,0,0.25);
@@ -762,7 +815,7 @@
       <span class="amount" id="totalPrice">RD$ 0</span>
     </div>
     <button class="checkout-btn" onclick="checkout()">
-      <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
+      <i class="fab fa-whatsapp"></i> Realizar orden y confirmar por WhatsApp
     </button>
     <div class="email-invoice-row">
       <input type="email" id="customerEmail" placeholder="Tu correo, para enviarte la factura">
@@ -794,6 +847,19 @@
   </div>
   <div class="orders-tabs" id="ordersTabs"></div>
   <div class="orders-list" id="ordersList"></div>
+</div>
+
+<div class="overlay admin-overlay" id="orderDetailOverlay" onclick="closeOrderDetail()" style="z-index:2100;"></div>
+
+<div class="order-detail-modal" id="orderDetailModal">
+  <div class="order-detail-header">
+    <div>
+      <div class="title">Detalle del pedido</div>
+      <div class="sub" id="orderDetailSub"></div>
+    </div>
+    <button onclick="closeOrderDetail()" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="order-detail-body" id="orderDetailBody"></div>
 </div>
 
 <div class="password-modal" id="passwordModal">
@@ -1444,10 +1510,9 @@
       doc.save(fileName);
 
       const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-      let msg = `Hola! Soy ${customer.name}. Quiero pedir los productos de mi factura adjunta.\n\n`;
-      msg += `Entregar a: ${customer.address}\n`;
-      msg += `Total: RD$ ${total.toLocaleString()}\n\n`;
-      msg += 'Adjunto el PDF que acabo de descargar 📎';
+      let msg = `Hola! Realicé una orden.\n`;
+      msg += `Número de orden: ${invoiceNumber}\n`;
+      msg += `Entrega en: ${customer.address}`;
 
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
       showToast('Factura descargada — adjúntala en el chat de WhatsApp');
@@ -1715,11 +1780,14 @@
       <div class="order-card">
         <div class="order-card-top">
           <div>
-            <div class="order-invoice">${o.invoiceNumber}</div>
+            <div class="order-invoice" style="cursor:pointer;" onclick="openOrderDetail(${o.id})">${o.invoiceNumber}</div>
             <div class="order-date">${formatOrderDate(o.createdAt)} · ${o.channel === 'email' ? 'Correo' : 'WhatsApp'}</div>
             <span class="status-pill status-${o.status}">${o.status}</span>
           </div>
-          <div class="order-total">RD$ ${o.total.toLocaleString()}</div>
+          <div style="text-align:right;">
+            <div class="order-total">RD$ ${o.total.toLocaleString()}</div>
+            <button class="order-detail-link" onclick="openOrderDetail(${o.id})">Ver detalle</button>
+          </div>
         </div>
         <div class="order-customer">
           <strong>${o.customerName}</strong> · ${o.customerPhone}<br>
@@ -1756,6 +1824,10 @@
     if (order) order.status = newStatus;
     updateOrdersBadge();
     renderOrders();
+    if (document.getElementById('orderDetailModal').classList.contains('active')
+        && currentDetailOrderId === orderId){
+      renderOrderDetailBody(order);
+    }
     showToast('✓ Estado actualizado');
   }
 
@@ -1764,6 +1836,87 @@
     const pending = orders.filter(o => o.status === 'pendiente').length;
     badge.textContent = pending;
     badge.style.display = pending > 0 ? 'flex' : 'none';
+  }
+
+  /* ===== Detalle de un pedido ===== */
+  let currentDetailOrderId = null;
+
+  function openOrderDetail(orderId){
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+    currentDetailOrderId = orderId;
+    document.getElementById('orderDetailSub').textContent =
+      `${order.invoiceNumber} · ${formatOrderDate(order.createdAt)}`;
+    renderOrderDetailBody(order);
+    document.getElementById('orderDetailModal').classList.add('active');
+    document.getElementById('orderDetailOverlay').style.display = 'block';
+  }
+
+  function closeOrderDetail(){
+    document.getElementById('orderDetailModal').classList.remove('active');
+    document.getElementById('orderDetailOverlay').style.display = 'none';
+    currentDetailOrderId = null;
+  }
+
+  function renderOrderDetailBody(order){
+    const body = document.getElementById('orderDetailBody');
+    const itemsRows = order.items.map(i => `
+      <tr>
+        <td>
+          <div class="detail-item-name">${i.name}</div>
+          <div class="detail-item-category">${i.category || ''}</div>
+        </td>
+        <td class="num">${i.quantity}</td>
+        <td class="num">RD$ ${i.price.toLocaleString()}</td>
+        <td class="num">RD$ ${(i.price * i.quantity).toLocaleString()}</td>
+      </tr>
+    `).join('');
+
+    body.innerHTML = `
+      <div class="detail-section">
+        <div class="detail-section-title">Estado del pedido</div>
+        <div class="detail-status-row">
+          <span class="status-pill status-${order.status}">${order.status}</span>
+          <select onchange="updateOrderStatus(${order.id}, this.value)">
+            ${ORDER_STATUSES.map(s => `<option value="${s}" ${s === order.status ? 'selected' : ''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+          </select>
+          <a class="order-whatsapp-btn" href="${whatsappLinkForPhone(order.customerPhone)}" target="_blank">
+            <i class="fab fa-whatsapp"></i> Contactar a ${order.customerName.split(' ')[0]}
+          </a>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Cliente</div>
+        <dl class="detail-customer-grid">
+          <dt>Nombre</dt><dd>${order.customerName}</dd>
+          <dt>Teléfono</dt><dd>${order.customerPhone}</dd>
+          <dt>Entregar a</dt><dd>${order.customerAddress}</dd>
+          <dt>Pedido por</dt><dd>${order.channel === 'email' ? 'Correo electrónico' : 'WhatsApp'}</dd>
+        </dl>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Productos (${order.items.reduce((s,i)=>s+i.quantity,0)})</div>
+        <table class="detail-items-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th class="num">Cant.</th>
+              <th class="num">Precio</th>
+              <th class="num">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsRows}
+            <tr class="detail-total-row">
+              <td colspan="3">Total</td>
+              <td class="num">RD$ ${order.total.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
   }
 
   function populateCategorySelect(){
